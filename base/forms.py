@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from .models import BlogItem
+from .models import BlogItem, Comment
 
 User = get_user_model()
 
@@ -30,4 +30,11 @@ class BlogForm(ModelForm):
             'title',
             'content',
             'category',
+        )
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = (
+            'content',
         )

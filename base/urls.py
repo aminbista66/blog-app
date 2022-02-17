@@ -1,4 +1,3 @@
-from unicodedata import name
 from django.urls import path
 from . import views
 
@@ -15,4 +14,6 @@ urlpatterns = [
     path('category-detail/<int:pk>', views.CategoryDetail.as_view(), name='category-detail'),
     path('like/<int:pk>', views.LikeBlog, name='like-blog'),
     path('dislike/<int:pk>', views.DisLikeBlog, name='dislike-blog'),
+    path('comment/<int:pk>', views.AddComment, name='add-comment'),
+    path('comment-update/<int:pk>', views.UpdateComment.as_view(), name='update-comment'),
 ]

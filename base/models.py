@@ -26,3 +26,12 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+    content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(BlogItem, related_name="comments", on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.content
