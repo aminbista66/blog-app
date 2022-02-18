@@ -144,7 +144,7 @@ def LikeBlog(request, pk):
 def DisLikeBlog(request, pk):
     blog = get_object_or_404(BlogItem, id=request.POST.get("blog_id"))
     blog.dislikes.add(request.user)
-    if blog.likes.filter(id=request.user.id).exists:
+    if blog.likes.filter(id=request.user.id).exists():
         blog.likes.remove(request.user)
     return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': pk}))
 
@@ -168,7 +168,6 @@ def AddComment(request, pk):
 class UpdateComment(LoginRequiredMixin, generic.UpdateView):
     template_name = 'base/comment_update.html'
     form_class = CommentForm
-    # success_url = reverse_lazy('blog:home')
     def get_queryset(self):
         qs = Comment.objects.all()
         return qs
@@ -176,3 +175,20 @@ class UpdateComment(LoginRequiredMixin, generic.UpdateView):
     def get_success_url(self):
         comment = self.get_object()
         return reverse('blog:blog-detail', kwargs={'pk':comment.post.id})
+
+def DeleteComment(request, pk):
+    comment = Comment.objects.filter(user=request.user).filter(id=pk)
+    post_id = comment.first().post.id
+    comment.delete()
+    return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk':post_id}))
+
+def RemoveLike(request, pk):
+    blog = BlogItem.objects.filter(id=pk).first()
+    blog.likes.remove(request.user)
+    return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': blog.id}))
+
+def RemoveDisLike(request, pk):
+    blog = BlogItem.objects.filter(id=pk).first()
+    blog.dislikes.remove(request.user)
+    print(blog)
+    return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': blog.id}))
