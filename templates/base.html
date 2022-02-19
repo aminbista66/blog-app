@@ -8,38 +8,131 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
-<body>
-    <header class="text-gray-400 bg-gray-900 body-font">
-        <div class="container mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
-            <a href="{% url 'blog:home' %}"  class="flex title-font font-medium items-center text-white mb-4 md:mb-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2" class="w-8 h-8 text-white p-2 bg-indigo-500 rounded-full"
-                    viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                </svg>
-                <span class="ml-3 text-xl">BlogBlog</span>
-            </a>
-            <nav
-                class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-700 text-sm	flex flex-wrap items-center text-base justify-center">
-                <a href="{% url 'blog:blog-create' %}" class="mr-5 hover:text-white">Create</a>
-                <a href="{% url 'blog:category-list' %}" class="mr-5 hover:text-white">Categories</a>
-                <a class="mr-5 hover:text-white">Fourth Link</a>
-                {% if request.user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="mr-5 hover:text-white">Logout</a>
-                {% else %}
-                <a href="{% url 'login' %}" class="mr-5 hover:text-white">Login</a>
-                {% endif %}
-            </nav>
-            <button
-                class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0">
-                <a href="{% url 'register' %}">Signup</a>
-                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    class="w-4 h-4 ml-1" viewBox="0 0 24 24">
-                    <path d="M5 12h14M12 5l7 7-7 7"></path>
-                </svg>
-            </button>
+<body class="bg-gray-900">
+
+<style>
+    html::-webkit-scrollbar {
+        width: 4px;
+        cursor: pointer;
+        /*background-color: rgba(229, 231, 235, var(--bg-opacity));*/
+
+    }
+
+    html::-webkit-scrollbar-track {
+        background-color: #27272a;
+        cursor: pointer;
+        /*background: red;*/
+    }
+
+    html::-webkit-scrollbar-thumb {
+        cursor: pointer;
+        background-color: #6b7581;
+        /*outline: 1px solid slategrey;*/
+    }
+</style>
+<nav class="bg-white shadow dark:bg-gray-900">
+    <div class="container px-6 py-4 mx-auto">                                           
+        <div class="md:flex md:items-center md:justify-between">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-semibold text-gray-700">
+                    <a class="text-2xl font-bold text-gray-800 transition-colors duration-200 transform dark:text-white lg:text-3xl hover:text-gray-700 dark:hover:text-gray-300"
+                        href="{% url 'blog:home' %}">Brand</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex md:hidden">
+                    <button type="button"
+                        class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400"
+                        aria-label="toggle menu" onclick="handleClick()" id="btn">
+                        <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current">
+                            <path fill-rule="evenodd"
+                                d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu open: "block", Menu closed: "hidden" -->
+            <div id="menu" class="flex-1 hidden md:flex md:items-center md:justify-between">
+                <div class="flex flex-col -mx-4 md:flex-row md:items-center md:mx-8">
+                    <a href="{% url 'blog:home' %}"
+                        class="px-2 py-1 mx-2 mt-2 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded-md md:mt-0 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700">
+                        Home</a>
+                    <a href="{% url 'blog:category-list' %}"
+                        class="px-2 py-1 mx-2 mt-2 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded-md md:mt-0 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700">Browse
+                        Category</a>
+                    <a href="{% url 'register' %}"
+                        class="px-2 py-1 mx-2 mt-2 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded-md md:mt-0 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700">Register
+                        now</a>
+                    {% if not request.user.is_authenticated %}
+                        <a href="{% url 'login' %}"
+                            class="px-2 py-1 mx-2 mt-2 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded-md md:mt-0 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700">Login</a>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center mt-4 md:mt-0">
+                <a href="{% url 'blog:blog-create' %}">
+                        <button
+                        class="mr-2 flex px-2 py-2 mr-5 items-center font-medium tracking-wide text-white transition-colors duration-200 transform bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="mx-1 text-sm flex justify-center align-center">create blog</span>
+                    </button>
+                </a>
+
+                    <button type="button" class="flex items-center focus:outline-none"
+                        aria-label="toggle profile dropdown">
+                        <div class="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
+                            {% if not request.user.is_authenticated %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                            </svg>
+                            {% endif %}                          
+
+                            {% if request.user.image %}
+                            <img src="/media/{{request.user.image}}"
+                                class="object-cover w-full h-full" alt="avatar">
+                            {% else %} 
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                            {% endif %}
+
+                        </button>
+                        {% if request.user.is_authenticated %}
+                        <h3 class="mx-2 text-sm font-medium capitalize text-gray-700 dark:text-gray-200 ">
+                            {{request.user.username}}
+                        </h3>
+                        {% else %}
+                        <h3 class="mx-2 test-sm font-medium capitalize text-gray-200 dark:test-gray-200">Guest</h3>
+                        {% endif %}
+                </div>
+            </div>
         </div>
-    </header>
+    </div>
+</nav>
+<script>
+    let btn = document.getElementById("btn")
+    let menu = document.getElementById("menu")
+    let isopen = true
+    const handleClick = () =>{
+        console.log(isopen)
+        if(isopen){
+            menu.classList.toggle('block', isopen);
+            menu.classList.remove('hidden')
+        }else{
+            menu.classList.add('hidden')
+            menu.classList.remove('block')
+        }
+        isopen = !isopen        
+    }
+</script>
+
+    {% load tailwind_filters %}
+    {% load crispy_forms_tags %}
     {% block content %}    
     
     {% endblock %}    

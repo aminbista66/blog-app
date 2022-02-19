@@ -110,7 +110,7 @@
                             {% if Commented %}
                                 <a href="{% url 'blog:add-comment' blog.pk %}">
                                 <button type="submit" value="{{blog.id}}" name="blog_id">
-                                    <span class="text-gray-500 inline-flex items-center leading-none text-sm">
+                                    <span class="text-gray-500 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-800">
                                         <svg class="w-6 h-6 mr-1" stroke="currentColor" stroke-width="2" fill="currentColor" stroke-linecap="round"
                                         stroke-linejoin="round" viewBox="0 0 24 24">
                                         <path
@@ -123,7 +123,7 @@
                                 {% else %}
                                 <a href="{% url 'blog:add-comment' blog.pk %}">
                                     <button type="submit" value="{{blog.id}}" name="blog_id">
-                                        <span class="text-gray-500 inline-flex items-center leading-none text-sm">
+                                        <span class="text-gray-500 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-800">
                                             <svg class="w-6 h-6 mr-1" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                                             stroke-linejoin="round" viewBox="0 0 24 24">
                                             <path
@@ -134,6 +134,11 @@
                             </button>
                         </a>
                                 {% endif %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>{{blog.views.count}}
                             </div>
                         </div>
                     </div>
@@ -141,7 +146,7 @@
                 <div
                     class="sm:w-2/3 sm:pl-8 sm:py-8 sm:border-l border-gray-800 sm:border-t-0 border-t mt-4 pt-4 sm:mt-0 text-center sm:text-left">
                     <h2 class="tracking-widest text-xs title-font font-medium text-indigo-400 mb-1">{{blog.created_at}}</h2>
-                    <p class="leading-relaxed text-lg mb-4">{{blog.content}}</p>
+                    <p class="leading-relaxed text-lg mb-4">{{blog.content|safe}}</p>
                     
                 </div>
             </div>

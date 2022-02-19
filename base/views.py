@@ -1,5 +1,4 @@
 from asyncio.format_helpers import _format_callback
-from distutils.errors import CompileError
 from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
 from django.http import HttpResponseRedirect
 from django.views import generic
@@ -10,33 +9,38 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from datetime import datetime, tzinfo
+from django.db.models import Count
 
 class SignupView(generic.CreateView):
     template_name = 'registration/signup.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('logout')
     form_class = SignupForm
 
 
-class HomeView(LoginRequiredMixin, generic.ListView):
+class HomeView(generic.ListView):
     template_name = 'base/home.html'
     context_object_name = 'blogs_item'
 
     def get_queryset(self):
-        qs = BlogItem.objects.all().order_by('-likes', 'dislikes')
+        qs = BlogItem.objects.all()
+        qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.annotate(nlikes=Count('likes')).order_by('-nlikes')
         object_id = qs[0].pk
         qs = qs.exclude(pk=object_id)
         return qs
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        qs = BlogItem.objects.all().order_by('-likes', 'dislikes')
+        qs = BlogItem.objects.all()
+        qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.annotate(nlikes=Count('likes')).order_by('-nlikes')
         context.update({
             "blog_of_the_day": qs.first()
         })
         return context
 
 
-class PostDetailView(LoginRequiredMixin, generic.DetailView):
+class PostDetailView(generic.DetailView):
     template_name = 'base/blog_detail.html'
     context_object_name = 'blog'
 
@@ -46,28 +50,35 @@ class PostDetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PostDetailView, self).get_context_data(**kwargs)
-        Liked = False
-        DisLiked = False
-        Commented = False
-        blog = self.get_object()
-        user_id = self.request.user.id
-        comments = Comment.objects.filter(post=blog)
-
-        if blog.likes.filter(id=user_id).exists():
-            Liked = True
-            DisLiked = False
-        if blog.dislikes.filter(id=user_id).exists():
-            DisLiked = True
+        if self.request.user.is_authenticated:
             Liked = False
-        if comments.filter(user__id=user_id).exists():
-            Commented = True
+            DisLiked = False
+            Commented = False
+            blog = self.get_object()
+            user_id = self.request.user.id
+            comments = Comment.objects.filter(post=blog)
 
-        context.update({
-            "Liked": Liked,
-            "DisLiked": DisLiked,
-            'Commented': Commented,
-            'comments': comments,
-        })
+            if blog.likes.filter(id=user_id).exists():
+                Liked = True
+                DisLiked = False
+            if blog.dislikes.filter(id=user_id).exists():
+                DisLiked = True
+                Liked = False
+            if comments.filter(user__id=user_id).exists():
+                Commented = True
+            if not blog.views.filter(id=user_id).exists():
+                blog.views.add(self.request.user)
+
+            context.update({
+                "Liked": Liked,
+                "DisLiked": DisLiked,
+                'Commented': Commented,
+                'comments': comments,
+            })
+        else:
+            context.update({
+                'comments':Comment.objects.filter(post=self.get_object())
+            })
         return context
 
 
@@ -99,6 +110,7 @@ def PostDeleteView(request, pk):
     user = request.user
     qs = BlogItem.objects.filter(author=user)
     qs = qs.filter(id=pk)
+    qs = qs.first()
     if qs.author == user:
         qs.delete()
     return HttpResponseRedirect(reverse('blog:home'))
@@ -132,7 +144,7 @@ class CategoryDetail(LoginRequiredMixin, generic.DeleteView):
         })
         return context
 
-
+@login_required
 def LikeBlog(request, pk):
     blog = get_object_or_404(BlogItem, id=request.POST.get("blog_id"))
     blog.likes.add(request.user)
@@ -140,7 +152,7 @@ def LikeBlog(request, pk):
         blog.dislikes.remove(request.user)
     return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': pk}))
 
-
+@login_required
 def DisLikeBlog(request, pk):
     blog = get_object_or_404(BlogItem, id=request.POST.get("blog_id"))
     blog.dislikes.add(request.user)
@@ -148,7 +160,7 @@ def DisLikeBlog(request, pk):
         blog.likes.remove(request.user)
     return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': pk}))
 
-
+@login_required
 def AddComment(request, pk):
     post = BlogItem.objects.get(pk=pk)
     form = CommentForm()
@@ -168,6 +180,7 @@ def AddComment(request, pk):
 class UpdateComment(LoginRequiredMixin, generic.UpdateView):
     template_name = 'base/comment_update.html'
     form_class = CommentForm
+    
     def get_queryset(self):
         qs = Comment.objects.all()
         return qs
@@ -176,17 +189,20 @@ class UpdateComment(LoginRequiredMixin, generic.UpdateView):
         comment = self.get_object()
         return reverse('blog:blog-detail', kwargs={'pk':comment.post.id})
 
+@login_required
 def DeleteComment(request, pk):
     comment = Comment.objects.filter(user=request.user).filter(id=pk)
     post_id = comment.first().post.id
     comment.delete()
     return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk':post_id}))
 
+@login_required
 def RemoveLike(request, pk):
     blog = BlogItem.objects.filter(id=pk).first()
     blog.likes.remove(request.user)
     return HttpResponseRedirect(reverse('blog:blog-detail', kwargs={'pk': blog.id}))
 
+@login_required
 def RemoveDisLike(request, pk):
     blog = BlogItem.objects.filter(id=pk).first()
     blog.dislikes.remove(request.user)

@@ -37,7 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
+    
+    "crispy_forms",
+    "crispy_tailwind",
+    
     'base',
+    'profileapp',
+
 ]
 
 MIDDLEWARE = [
@@ -124,8 +131,13 @@ AUTH_USER_MODEL = 'base.User'
 
 LOGIN_REDIRECT_URL = '/blog'
 LOGOUT_REDIRECT_URL = '/login'
+LOGIN_URL = '/login'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+
+CRISPY_TEMPLATE_PACK = "tailwind"

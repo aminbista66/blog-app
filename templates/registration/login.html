@@ -1,9 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">submit</button>
-</form>
+{% load tailwind_filters %}
+        <form action="" method="post">
+            {% csrf_token %}
+    <div class="flex items-center min-h-screen bg-gray-900">
+        <div class="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
+            <div class="flex flex-col md:flex-row">
+                <div class="h-32 md:h-auto md:w-1/2">
+                    <img class="object-cover w-full h-full rounded-tl-lg rounded-bl-lg" src="https://source.unsplash.com/user/erondu/1600x900"
+                        alt="img" />
+                </div>
+                <div class="flex bg-gray-800 color-white items-center justify-center p-6 sm:p-12 md:w-1/2 rounded-tr-lg rounded-br-lg">
+                    <div class="w-full">
+                        <div class="flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-blue-600" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                                <path
+                                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                            </svg>
+                        </div>
+                        <h1 class="mb-4 text-2xl font-bold text-center text-gray-100">
+                            Sign up
+                        </h1>
+                        <div>
+                            <label class="block text-sm text-white mb-2">
+                                {{form.username.label}}
+                            </label>
+                            {{form.username}}
+                        </div>
+                        <div>
+                            <label class="block mt-4 text-sm text-white mb-2">
+                                {{form.password.label}}
+                            </label>
+                            {{form.password}}
+                        </div>
+                        <button
+                            class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
+                            href="#" type="submit">
+                            Login
+                        </button>
+                        
+                        <div class="mt-4 text-center">
+                            <p class="text-sm text-white">Don't have an account yet? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">
+                                    Sing up.</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
