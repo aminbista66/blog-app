@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Landing),
     path('blog/', include('base.urls', namespace='blog')),
-    path('profile/', include('profileapp.urls', namespace='user-profile')),
+    path('profile/', include('profileapp.urls', namespace='profileapp')),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', SignupView.as_view(), name='register'),

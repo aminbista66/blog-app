@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from datetime import datetime, tzinfo
 from django.db.models import Count
+from .algos import bubble_sort_like, get_top_post
 
 class SignupView(generic.CreateView):
     template_name = 'registration/signup.html'
@@ -23,19 +24,26 @@ class HomeView(generic.ListView):
 
     def get_queryset(self):
         qs = BlogItem.objects.all()
-        qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.order_by('-views')
         # qs = qs.annotate(nlikes=Count('likes')).order_by('-nlikes')
         object_id = qs[0].pk
-        qs = qs.exclude(pk=object_id)
-        return qs
+        # qs = qs.exclude(pk=object_id)
+        qs_list = [x for x in qs]
+        r_qs = bubble_sort_like(qs_list)
+        return r_qs
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         qs = BlogItem.objects.all()
-        qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
+        # qs = qs.order_by('-views')
         # qs = qs.annotate(nlikes=Count('likes')).order_by('-nlikes')
+        # r_qs = bubble_sort_like(qs)
+        qs_list = [x for x in qs]
+        r_qs = get_top_post(qs_list)
         context.update({
-            "blog_of_the_day": qs.first()
+            "blog_of_the_day": r_qs
         })
         return context
 
@@ -58,6 +66,7 @@ class PostDetailView(generic.DetailView):
             user_id = self.request.user.id
             comments = Comment.objects.filter(post=blog)
 
+
             if blog.likes.filter(id=user_id).exists():
                 Liked = True
                 DisLiked = False
@@ -68,6 +77,7 @@ class PostDetailView(generic.DetailView):
                 Commented = True
             if not blog.views.filter(id=user_id).exists():
                 blog.views.add(self.request.user)
+
 
             context.update({
                 "Liked": Liked,

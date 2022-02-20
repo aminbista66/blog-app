@@ -3,8 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from ckeditor.fields import RichTextField
 
+
 class User(AbstractUser):
     image = models.ImageField(null=True, upload_to="profile_image/")
+    age = models.IntegerField(null=True)
+    address = models.CharField(max_length=255, null=True)
+    bio = models.TextField(null=True, blank=True)
+    workplace = models.CharField(null=True, max_length=255)
     def __str__(self):
         return self.username
 
@@ -13,7 +18,6 @@ class BlogItem(models.Model):
     author = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE) 
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     title = models.CharField(max_length=255)
-    # content = models.TextField(null=True, blank=True)
     content = RichTextField(null=True, blank=True)
     category = models.ForeignKey("Category", null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)

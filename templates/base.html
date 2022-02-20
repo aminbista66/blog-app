@@ -104,7 +104,7 @@
                         </button>
                         {% if request.user.is_authenticated %}
                         <h3 class="mx-2 text-sm font-medium capitalize text-gray-700 dark:text-gray-200 ">
-                            {{request.user.username}}
+                           <a href="/profile/"> {{request.user.username}}</a
                         </h3>
                         {% else %}
                         <h3 class="mx-2 test-sm font-medium capitalize text-gray-200 dark:test-gray-200">Guest</h3>
