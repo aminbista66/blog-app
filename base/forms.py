@@ -1,9 +1,3 @@
-from dataclasses import field
-from email.mime import image
-from logging import PlaceHolder
-from tkinter import Widget
-from unicodedata import category
-import django
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth import get_user_model

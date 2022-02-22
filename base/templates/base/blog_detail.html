@@ -18,11 +18,15 @@
                 <div class="sm:w-1/3 text-center sm:pr-8 sm:py-8">
                     <div
                         class="w-20 h-20 rounded-full inline-flex items-center justify-center bg-gray-800 text-gray-600">
-                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" class="w-10 h-10" viewBox="0 0 24 24">
+                       {% if blog.author.image %}
+                       <img class="w-20 h-20 rounded-full object-cover" src="/media/{{blog.author.image}}" alt="">
+                       {% else %}
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10"
+                            viewBox="0 0 24 24">
                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
+                        {% endif %}
                     </div>
                     <div class="flex flex-col items-center text-center justify-center">
                         <h2 class="font-medium title-font mt-4 text-white text-lg">{{blog.author}}</h2>
@@ -109,7 +113,7 @@
                                 {% endif %}
                             {% if Commented %}
                                 <a href="{% url 'blog:add-comment' blog.pk %}">
-                                <button type="submit" value="{{blog.id}}" name="blog_id">
+                                <button id="comment" type="submit" value="{{blog.id}}" name="blog_id">
                                     <span class="text-gray-500 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-800">
                                         <svg class="w-6 h-6 mr-1" stroke="currentColor" stroke-width="2" fill="currentColor" stroke-linecap="round"
                                         stroke-linejoin="round" viewBox="0 0 24 24">
@@ -118,21 +122,21 @@
                                     </path>
                                 </svg>{{blog.comments.count}}
                             </span>
-                        </button>
-                    </a>
+                            </button>
+                            </a>
                                 {% else %}
                                 <a href="{% url 'blog:add-comment' blog.pk %}">
-                                    <button type="submit" value="{{blog.id}}" name="blog_id">
+                                    <button id="comment" type="submit" value="{{blog.id}}" name="blog_id">
                                         <span class="text-gray-500 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-800">
                                             <svg class="w-6 h-6 mr-1" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
                                             stroke-linejoin="round" viewBox="0 0 24 24">
                                             <path
                                             d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
-                                        </path>
-                                    </svg>{{blog.comments.count}}
-                                </span>
-                            </button>
-                        </a>
+                                            </path>
+                                            </svg>{{blog.comments.count}}
+                                        </span>
+                                    </button>
+                                </a>
                                 {% endif %}
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -173,8 +177,13 @@
                                         {% endif %}
                                         <p class="leading-relaxed mb-5">{{comment.content}}</p>
                                         <a class="inline-flex items-center">
+                                            {% if comment.user.image %}
+                                            <img alt="blog" src="/media/{{comment.user.image}}"
+                                                class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-center">
+                                            {% else %}
                                             <img alt="blog" src="https://dummyimage.com/103x103"
                                                 class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-center">
+                                            {% endif %}
                                             <span class="flex-grow flex pl-3">
                                             <span class="title-font font-medium text-white">
                                                 {% if comment.user == request.user %}
@@ -196,5 +205,12 @@
         </div>
     </div>
 </section>
+
+
+<script>
+    tippy('#comment', {
+        content: "Clik To Add Comment",
+    });
+</script>
 
 {% endblock %}

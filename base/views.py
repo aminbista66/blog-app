@@ -11,6 +11,7 @@ from django.db.models import Max
 from datetime import datetime, tzinfo
 from django.db.models import Count
 from .algos import bubble_sort_like, get_top_post
+from django.contrib.auth import get_user_model
 
 class SignupView(generic.CreateView):
     template_name = 'registration/signup.html'
@@ -24,12 +25,18 @@ class HomeView(generic.ListView):
 
     def get_queryset(self):
         qs = BlogItem.objects.all()
+        admin = get_user_model().objects.get(username="admin")
         # qs = qs.annotate(nviews=Count('views')).order_by('-nviews', 'likes')
         # qs = qs.order_by('-views')
         # qs = qs.annotate(nlikes=Count('likes')).order_by('-nlikes')
         object_id = qs[0].pk
         # qs = qs.exclude(pk=object_id)
         qs_list = [x for x in qs]
+        for i in qs_list:
+            if i.likes.count == 0:
+                i.likes.add(admin)
+            if i.dislikes.count() == 0:
+                i.dislikes.add(admin)
         r_qs = bubble_sort_like(qs_list)
         return r_qs
 
